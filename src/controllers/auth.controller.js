@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
  * - Post route Controller
  * -  Handel registration
  */
+// register
 async function registerController(req, res) {
   const { email, name, password } = req.body();
 
@@ -41,6 +42,44 @@ async function registerController(req, res) {
   });
 }
 
+// login
+async function loginController(req, res) {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res
+      .status(500)
+      .json({ message: "Email and Password are required", status: "failed" });
+  }
+
+  const isEmailExist = await User.findOne({ email: email });
+  if (!isEmailExist) {
+    res.status(500).json({ message: "Invalid Credentials!" });
+  }
+
+  const user = await User.findOne({ email: email }).select("+password"); // .select() bcz in schema we have false for pass
+  const isValidPassword = user.comparePassword(user.password);
+
+  if (!isValidPassword) {
+    res.status(401).json({ message: "Invalid Credentials!", status: "failed" });
+  }
+
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "3d",
+  });
+
+  res.cookie("token", token);
+
+  res.status(200).json({
+    user: {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+    },
+    token: token,
+  });
+}
+
 module.exports = {
   registerController,
+  loginController,
 };
