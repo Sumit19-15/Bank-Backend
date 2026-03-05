@@ -46,21 +46,21 @@ async function registerController(req, res) {
 async function loginController(req, res) {
   const { email, password } = req.body;
   if (!email || !password) {
-    res
+    return res
       .status(500)
       .json({ message: "Email and Password are required", status: "failed" });
   }
 
   const isEmailExist = await User.findOne({ email: email });
   if (!isEmailExist) {
-    res.status(500).json({ message: "Invalid Credentials!" });
+    return res.status(500).json({ message: "Invalid Credentials!" });
   }
 
   const user = await User.findOne({ email: email }).select("+password"); // .select() bcz in schema we have false for pass
   const isValidPassword = user.comparePassword(user.password);
 
   if (!isValidPassword) {
-    res.status(401).json({ message: "Invalid Credentials!", status: "failed" });
+    return res.status(401).json({ message: "Invalid Credentials!", status: "failed" });
   }
 
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
