@@ -27,7 +27,7 @@ const accountSchema = new mongoose.Schema(
   },
 );
 
-accountSchema.index({ user: 1, status: 1 });
+accountSchema.index({ user: 1, status: 1 }); // compound index 
 
 const Account = mongoose.model("Account", accountSchema);
 module.exports = Account;
