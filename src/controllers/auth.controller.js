@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
  */
 // register
 async function registerController(req, res) {
-  const { email, name, password } = req.body();
+  const { email, name, password } = req.body;
 
   const isExist = await User.findOne({
     email: email,
@@ -18,7 +18,7 @@ async function registerController(req, res) {
     res.status(422).json({ message: "Use different email", status: "failed" });
   }
 
-  const newUser = User.create({
+  const newUser = await User.create({
     email,
     password,
     name,
@@ -60,7 +60,9 @@ async function loginController(req, res) {
   const isValidPassword = user.comparePassword(user.password);
 
   if (!isValidPassword) {
-    return res.status(401).json({ message: "Invalid Credentials!", status: "failed" });
+    return res
+      .status(401)
+      .json({ message: "Invalid Credentials!", status: "failed" });
   }
 
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

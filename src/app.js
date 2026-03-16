@@ -12,4 +12,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/account", accountRouter);
 app.use("/api/transaction", transactionRouter);
 
+app.get("/", (req, res) => {
+  res.send("I am on");
+});
+
 module.exports = app;
