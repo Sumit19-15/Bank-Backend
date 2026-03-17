@@ -81,7 +81,27 @@ async function loginController(req, res) {
   });
 }
 
+async function logoutController(req, res) {
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(200).json({
+      message: "Account already logout or never login",
+    });
+  }
+
+  await BlackList.create({
+    token: token,
+  });
+
+  res.clearCookie("token");
+  res.status(200).json({
+    message: "Account logout successfully",
+  });
+}
+
 module.exports = {
   registerController,
   loginController,
+  logoutController,
 };

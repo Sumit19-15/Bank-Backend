@@ -138,7 +138,7 @@ async function createTransaction(req, res) {
       { session },
     );
 
-    await transactionModel.findOneAndUpdate(
+    await Transaction.findOneAndUpdate(
       { _id: transaction._id },
       { status: "COMPLETED" },
       { session },
